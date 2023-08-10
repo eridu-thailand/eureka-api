@@ -1,8 +1,12 @@
 import { NestFactory } from '@nestjs/core';
-import { StatusModule } from './status/status.module';
+import { ValidationPipe } from '@nestjs/common';
+import * as cookieParser from 'cookie-parser';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(StatusModule);
+  const app = await NestFactory.create(AppModule);
+  app.use(cookieParser());
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
 }
 bootstrap();
