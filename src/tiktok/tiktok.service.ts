@@ -2,7 +2,7 @@ import { map, catchError } from 'rxjs';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-import type { TikTokExchangeCodeResponse } from '~/types';
+import type { TikTokExchangeCodeResponse } from './interfaces';
 
 @Injectable()
 export class TikTokService {
