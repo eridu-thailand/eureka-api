@@ -6,10 +6,13 @@ import {
   Res,
   Query,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { TikTokService } from './tiktok.service';
+import { AuthGuard } from '~/auth/auth.guard';
 
 @Controller('tiktok')
+@UseGuards(AuthGuard)
 export class TikTokController {
   constructor(private tiktokService: TikTokService) {}
 
@@ -23,7 +26,7 @@ export class TikTokController {
     return this.tiktokService.generateOAuthLink(csrfState);
   }
 
-  @Get('exchange')
+  @Get('code-exchange')
   codeExchange(
     @Req() req: Request,
     @Query('code') code: string,
