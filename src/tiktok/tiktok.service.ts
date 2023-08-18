@@ -3,12 +3,16 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import type { TikTokExchangeCodeResponse } from './interfaces';
+import { UserService } from '~/user/user.service';
+import { UserDto } from '~/user/dto/user.dto';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class TikTokService {
   constructor(
     private configService: ConfigService,
     private http: HttpService,
+    private userService: UserService,
   ) {}
 
   createCsrfState() {
@@ -57,7 +61,7 @@ export class TikTokService {
       redirect_uri: CLIENT_CALLBACK,
     });
 
-    return this.http
+    const observable = this.http
       .post<TikTokExchangeCodeResponse>(url, formData, {
         headers: { ['content-type']: 'application/x-www-form-urlencoded' },
       })
@@ -75,5 +79,11 @@ export class TikTokService {
           throw new UnauthorizedException(error?.message || error);
         }),
       );
+
+    return lastValueFrom(observable);
+  }
+
+  updateUserCredentials(user: UserDto) {
+    return this.userService.upsertUserCredentials(user);
   }
 }

@@ -27,8 +27,8 @@ export class TikTokController {
   }
 
   @Get('code-exchange')
-  codeExchange(
-    @Req() req: Request,
+  async codeExchange(
+    @Req() req: Request & { user: { id: string } },
     @Query('code') code: string,
     @Query('scopes') _scopes: string,
     @Query('state') state: string,
@@ -43,7 +43,15 @@ export class TikTokController {
       });
     }
 
-    // TODO: save user credentials to db
-    return this.tiktokService.exchangeOAuthCode(code);
+    const { access_token: accessToken, refresh_token: refreshToken } =
+      await this.tiktokService.exchangeOAuthCode(code);
+
+    const userId = req.user.id;
+
+    return this.tiktokService.updateUserCredentials({
+      userId,
+      accessToken,
+      refreshToken,
+    });
   }
 }
